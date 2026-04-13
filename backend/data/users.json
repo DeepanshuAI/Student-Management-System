@@ -1,0 +1,18 @@
+[
+  {
+    "_id": "b4a6d363-063a-4259-b22d-c3c6a2240cd9",
+    "email": "admin@stuman.com",
+    "password": "$2b$10$gl0qpyqqlMMLuyTpGHbtAO2aX2Xam5xd.44wjowRAsXI0nBTy.qQ2",
+    "role": "admin",
+    "name": "Administrator",
+    "createdAt": "2026-04-10T06:10:11.330Z"
+  },
+  {
+    "_id": "69cddcfb-23d2-4b7c-a9b1-2b2d114b1fac",
+    "email": "teacher@stuman.com",
+    "password": "$2b$10$P7HRFazMqHsiqrtlE2OavOHZi/DfYuWoyvH62O7mpzqAwR6InUzJK",
+    "role": "teacher",
+    "name": "Mrs. Teacher",
+    "createdAt": "2026-04-10T06:10:11.379Z"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "_id": "d86bffc9-94d2-4abe-a497-ff3d0ec6d9a1",
+    "studentId": "SMS-2026-1020",
+    "subject": "computer",
+    "semester": " 2025",
+    "grade": "86",
+    "comments": "",
+    "createdAt": "2026-04-10T06:32:24.830Z",
+    "createdBy": "admin@stuman.com"
+  },
+  {
+    "_id": "cbd8567a-63c5-4a62-8f8e-d0e882976f62",
+    "studentId": "SMS-2026-1009",
+    "subject": "computer",
+    "semester": " 2025",
+    "grade": "12",
+    "comments": "",
+    "createdAt": "2026-04-10T06:32:24.830Z",
+    "createdBy": "admin@stuman.com"
+  }
+]

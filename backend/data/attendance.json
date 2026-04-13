@@ -1,0 +1,274 @@
+[
+  {
+    "course": "B.A B.Ed Hindi",
+    "date": "2026-04-10",
+    "records": [
+      {
+        "studentId": "SMS-2026-1026",
+        "status": "Absent"
+      },
+      {
+        "studentId": "SMS-2026-1010",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2026-1051",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2026-1073",
+        "status": "Absent"
+      },
+      {
+        "studentId": "SMS-2026-1094",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2026-1067",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2025-1014",
+        "status": "Absent"
+      },
+      {
+        "studentId": "SMS-2025-1055",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2025-1070",
+        "status": "Absent"
+      },
+      {
+        "studentId": "SMS-2024-1065",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2024-1064",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1005",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1032",
+        "status": "Absent"
+      },
+      {
+        "studentId": "SMS-2023-1085",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1012",
+        "status": "Present"
+      }
+    ],
+    "updatedAt": "2026-04-10T06:18:25.797Z",
+    "updatedBy": "admin@stuman.com"
+  },
+  {
+    "course": "B.Sc B.Ed Mathematics",
+    "date": "2026-04-10",
+    "records": [
+      {
+        "studentId": "SMS-2026-1062",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2026-1068",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2026-1080",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2026-1078",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2026-1076",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2026-1035",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2025-1042",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2025-1033",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2025-1091",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2025-1015",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2025-1000",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2024-1048",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2024-1039",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2024-1017",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2024-1098",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1018",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1079",
+        "status": "Present"
+      }
+    ],
+    "updatedAt": "2026-04-10T06:23:05.719Z",
+    "updatedBy": "admin@stuman.com"
+  },
+  {
+    "course": "B.A B.Ed English",
+    "date": "2026-04-10",
+    "records": [
+      {
+        "studentId": "SMS-2026-1008",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2026-1082",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2026-1066",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2026-1025",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2026-1029",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2025-1071",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2025-1087",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2025-1084",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2025-1088",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2025-1006",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2025-1041",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2025-1027",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2024-1001",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2024-1013",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2024-1058",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2024-1003",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2024-1046",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2024-1021",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2024-1050",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2024-1049",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2024-1090",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1004",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1074",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1016",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1072",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1044",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1043",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1054",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1059",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1053",
+        "status": "Present"
+      }
+    ],
+    "updatedAt": "2026-04-10T06:23:08.522Z",
+    "updatedBy": "admin@stuman.com"
+  }
+]
