@@ -6,7 +6,7 @@ import { Button } from '../components/ui/button';
 import { motion } from 'framer-motion';
 import { 
   Users, BookOpen, UserPlus, Calendar,
-  ArrowRight, Search, Activity, AlertCircle, Loader2
+  ArrowRight, Activity, AlertCircle, Loader2, Sparkles, TrendingUp
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -32,7 +32,7 @@ const Dashboard = () => {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.1 }
+      transition: { staggerChildren: 0.1, delayChildren: 0.1 }
     }
   };
 
@@ -43,17 +43,22 @@ const Dashboard = () => {
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      <p className="text-muted-foreground font-medium animate-pulse">Loading dashboard insights...</p>
+      <div className="relative">
+        <div className="h-16 w-16 rounded-full border-4 border-violet-500/20 border-t-violet-500 animate-spin" />
+        <div className="absolute inset-0 h-16 w-16 rounded-full blur-xl bg-violet-500/20" />
+      </div>
+      <p className="text-muted-foreground font-medium animate-pulse">Loading insights...</p>
     </div>
   );
 
   if (error) return (
     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center justify-center min-h-[60vh] text-center gap-4">
-      <div className="rounded-full bg-destructive/10 p-4"><AlertCircle className="h-8 w-8 text-destructive" /></div>
-      <h3 className="text-xl font-bold">Connection Error</h3>
+      <div className="rounded-2xl bg-destructive/10 p-5 shadow-glow-sm relative">
+        <AlertCircle className="h-10 w-10 text-destructive" />
+      </div>
+      <h3 className="text-2xl font-display font-bold">Connection Error</h3>
       <p className="text-muted-foreground">{error}</p>
-      <Button onClick={() => window.location.reload()} className="mt-2">Retry Connection</Button>
+      <Button onClick={() => window.location.reload()} className="mt-2" variant="outline">Retry Connection</Button>
     </motion.div>
   );
 
@@ -62,108 +67,114 @@ const Dashboard = () => {
   const totalCourses = Object.keys(stats.byCourse || {}).length;
 
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-8">
+    <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-8 pb-8">
       {/* Header */}
-      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-          <p className="text-muted-foreground mt-1 text-sm">Welcome back! Here's an overview of your student metrics.</p>
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-2">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-primary font-medium text-sm mb-1">
+            <Sparkles size={16} /> Welcome back
+          </div>
+          <h2 className="text-4xl font-display font-bold tracking-tight text-foreground">Overview Insights</h2>
+          <p className="text-muted-foreground max-w-xl text-balance">Here's a comprehensive look at your institution's enrollments and daily activities.</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Link to="/students"><Button variant="outline" className="hidden sm:inline-flex">View All</Button></Link>
-          <Link to="/students/add"><Button><UserPlus className="h-4 w-4 mr-2" /> Add Student</Button></Link>
+        <div className="flex items-center gap-3">
+          <Link to="/students">
+            <Button variant="outline" className="hidden sm:inline-flex bg-background/50 backdrop-blur">View Directory</Button>
+          </Link>
+          <Link to="/students/add">
+            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow">
+              <UserPlus className="h-4 w-4 mr-2" /> Enroll Student
+            </Button>
+          </Link>
         </div>
       </motion.div>
 
       {/* KPI Cards */}
       <motion.div variants={itemVariants} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-        <Card animateHover>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between space-y-0 pb-2">
-              <p className="text-sm font-medium leading-none tracking-tight">Total Students</p>
-              <div className="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-full"><Users className="h-4 w-4 text-blue-600 dark:text-blue-400" /></div>
-            </div>
-            <div className="flex items-baseline space-x-2">
-              <h2 className="text-3xl font-bold tracking-tighter">{stats.total}</h2>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">All enrolled students</p>
-          </CardContent>
-        </Card>
+        <div className="kpi-card p-6">
+          <div className="flex items-center justify-between pb-4">
+            <p className="text-sm font-semibold tracking-wide text-muted-foreground">TOTAL ENROLLED</p>
+            <div className="p-2.5 bg-violet-500/10 dark:bg-violet-500/20 rounded-xl"><Users className="h-5 w-5 text-violet-600 dark:text-violet-400" /></div>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <h2 className="text-4xl font-display font-bold tracking-tighter text-foreground">{stats.total}</h2>
+            <span className="flex items-center text-xs font-medium text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded gap-1"><TrendingUp size={10} /> +12%</span>
+          </div>
+        </div>
         
-        <Card animateHover>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between space-y-0 pb-2">
-              <p className="text-sm font-medium leading-none tracking-tight">Active Courses</p>
-              <div className="p-2 bg-purple-100 dark:bg-purple-900/40 rounded-full"><BookOpen className="h-4 w-4 text-purple-600 dark:text-purple-400" /></div>
-            </div>
-            <div className="flex items-baseline space-x-2">
-              <h2 className="text-3xl font-bold tracking-tighter">{totalCourses}</h2>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">Unique departments</p>
-          </CardContent>
-        </Card>
+        <div className="kpi-card p-6">
+          <div className="flex items-center justify-between pb-4">
+            <p className="text-sm font-semibold tracking-wide text-muted-foreground">ACTIVE COURSES</p>
+            <div className="p-2.5 bg-blue-500/10 dark:bg-blue-500/20 rounded-xl"><BookOpen className="h-5 w-5 text-blue-600 dark:text-blue-400" /></div>
+          </div>
+          <div>
+            <h2 className="text-4xl font-display font-bold tracking-tighter text-foreground">{totalCourses}</h2>
+          </div>
+        </div>
 
-        <Card animateHover>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between space-y-0 pb-2">
-              <p className="text-sm font-medium leading-none tracking-tight">Present Today</p>
-              <div className="p-2 bg-emerald-100 dark:bg-emerald-900/40 rounded-full"><Activity className="h-4 w-4 text-emerald-600 dark:text-emerald-400" /></div>
-            </div>
-            <div className="flex items-baseline space-x-2">
-              <h2 className="text-3xl font-bold tracking-tighter">{stats.presentToday || 0}</h2>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">Students marked present</p>
-          </CardContent>
-        </Card>
+        <div className="kpi-card p-6">
+           <div className="flex items-center justify-between pb-4">
+            <p className="text-sm font-semibold tracking-wide text-muted-foreground">PRESENT TODAY</p>
+            <div className="p-2.5 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-xl"><Activity className="h-5 w-5 text-emerald-600 dark:text-emerald-400" /></div>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <h2 className="text-4xl font-display font-bold tracking-tighter text-foreground">{stats.presentToday || 0}</h2>
+          </div>
+        </div>
 
-        <Card animateHover>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between space-y-0 pb-2">
-              <p className="text-sm font-medium leading-none tracking-tight">Current Year</p>
-              <div className="p-2 bg-amber-100 dark:bg-amber-900/40 rounded-full"><Calendar className="h-4 w-4 text-amber-600 dark:text-amber-400" /></div>
-            </div>
-            <div className="flex items-baseline space-x-2">
-              <h2 className="text-3xl font-bold tracking-tighter">{stats.byYear?.[new Date().getFullYear()] || 0}</h2>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">Class of {new Date().getFullYear()}</p>
-          </CardContent>
-        </Card>
+        <div className="kpi-card p-6 border-transparent bg-gradient-to-br from-primary/10 via-primary/5 to-transparent relative">
+          <div className="absolute inset-0 bg-mesh-light dark:bg-mesh-dark opacity-50 mix-blend-overlay pointer-events-none" />
+           <div className="relative flex items-center justify-between pb-4">
+            <p className="text-sm font-semibold tracking-wide text-primary">CURRENT BATCH</p>
+            <div className="p-2.5 bg-background/50 rounded-xl backdrop-blur-sm"><Calendar className="h-5 w-5 text-primary" /></div>
+          </div>
+          <div className="relative flex items-baseline gap-2">
+            <h2 className="text-4xl font-display font-bold tracking-tighter text-foreground">{stats.byYear?.[new Date().getFullYear()] || 0}</h2>
+            <p className="text-xs text-primary font-medium">Class of {new Date().getFullYear()}</p>
+          </div>
+        </div>
       </motion.div>
 
       {/* Main Grid Data */}
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Recents */}
         <motion.div variants={itemVariants} className="lg:col-span-2">
-          <Card className="h-full flex flex-col">
-            <CardHeader className="flex flex-row items-center justify-between border-b pb-4">
+          <Card className="glass-card shadow-soft h-full flex flex-col border-none overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 bg-muted/20 pb-4 px-6 pt-6">
               <div className="space-y-1">
-                <CardTitle>Recent Students</CardTitle>
-                <CardDescription>The latest student enrollments in the system.</CardDescription>
+                <CardTitle className="font-display text-xl">Recent Enrollments</CardTitle>
+                <CardDescription>Latest students joined the institution.</CardDescription>
               </div>
-              <Link to="/students"><Button variant="ghost" size="sm" className="hidden sm:inline-flex">View all <ArrowRight className="ml-2 h-4 w-4" /></Button></Link>
+              <Link to="/students"><Button variant="ghost" size="sm" className="hidden sm:inline-flex text-primary hover:bg-primary/10">View all <ArrowRight className="ml-2 h-4 w-4" /></Button></Link>
             </CardHeader>
             <CardContent className="flex-1 p-0">
               {stats.recent.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full p-8 text-center text-muted-foreground">
+                <div className="flex flex-col items-center justify-center h-48 text-center text-muted-foreground">
                   <p>No students available.</p>
                 </div>
               ) : (
-                <div className="divide-y divide-border">
-                  {stats.recent.map((s) => (
-                    <div key={s._id} className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors">
+                <div className="divide-y divide-border/50">
+                  {stats.recent.map((s, i) => (
+                    <motion.div 
+                      key={s._id} 
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05 + 0.3 }}
+                      className="flex items-center justify-between p-4 px-6 hover:bg-muted/30 transition-colors"
+                    >
                       <div className="flex items-center gap-4">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 text-white font-bold shadow-sm">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-violet text-white font-bold shadow-glow-sm">
                           {s.fullName.charAt(0).toUpperCase()}
                         </div>
                         <div className="flex flex-col">
-                          <span className="text-sm font-medium">{s.fullName}</span>
-                          <span className="text-xs text-muted-foreground">{s.studentId} · {s.course}</span>
+                          <span className="text-sm font-semibold text-foreground">{s.fullName}</span>
+                          <span className="text-xs text-muted-foreground font-medium mt-0.5">{s.studentId} <span className="mx-1.5 opacity-50">•</span> <span className="text-primary/80">{s.course}</span></span>
                         </div>
                       </div>
                       <Link to={`/students/${s._id}`}>
-                        <Button variant="ghost" size="sm">Details</Button>
+                        <Button variant="ghost" size="sm" className="rounded-full hover:bg-primary/10 hover:text-primary transition-all">Details</Button>
                       </Link>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               )}
@@ -173,25 +184,25 @@ const Dashboard = () => {
 
         {/* Breakdown */}
         <motion.div variants={itemVariants} className="space-y-6">
-          <Card>
-            <CardHeader className="pb-3 border-b">
-              <CardTitle className="text-base">Students by Course</CardTitle>
+          <Card className="glass-card shadow-soft border-none overflow-hidden">
+            <CardHeader className="pb-3 border-b border-border/50 bg-muted/20 px-5 pt-5">
+              <CardTitle className="font-display text-lg">Top Courses</CardTitle>
             </CardHeader>
-            <CardContent className="pt-4 space-y-4">
+            <CardContent className="pt-5 px-5 space-y-5">
               {topCourses.map(([course, count]) => {
                 const pct = stats.total > 0 ? Math.round((count / stats.total) * 100) : 0;
                 return (
-                  <div key={course} className="space-y-1">
+                  <div key={course} className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium text-foreground">{course}</span>
-                      <span className="text-muted-foreground">{count} ({pct}%)</span>
+                      <span className="font-semibold text-foreground">{course}</span>
+                      <span className="text-muted-foreground font-mono">{count} <span className="text-xs ml-1 opacity-70">({pct}%)</span></span>
                     </div>
-                    <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
+                    <div className="h-2.5 w-full overflow-hidden rounded-full bg-secondary/80 shadow-inner">
                       <motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${pct}%` }}
-                        transition={{ duration: 1, ease: "easeOut" }}
-                        className="h-full bg-primary" 
+                        transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
+                        className="h-full bg-gradient-violet" 
                       />
                     </div>
                   </div>
@@ -200,25 +211,29 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-3 border-b">
-              <CardTitle className="text-base">Enrollment by Year</CardTitle>
+          <Card className="glass-card shadow-soft border-none overflow-hidden">
+            <CardHeader className="pb-3 border-b border-border/50 bg-muted/20 px-5 pt-5">
+              <CardTitle className="font-display text-lg">Enrollment Timeline</CardTitle>
             </CardHeader>
-            <CardContent className="pt-4 space-y-4">
-              {topYears.map(([yr, count]) => (
-                <div key={yr} className="flex items-center gap-3">
-                  <span className="flex items-center justify-center text-xs font-bold bg-accent text-accent-foreground px-2 py-1 rounded w-12">{yr}</span>
-                  <div className="flex-1 h-2 overflow-hidden rounded-full bg-secondary">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: `${Math.round((count / (stats.total || 1)) * 100)}%` }}
-                      transition={{ duration: 1, ease: "easeOut" }}
-                      className="h-full bg-emerald-500" 
-                    />
+            <CardContent className="pt-5 px-5 space-y-4">
+              {topYears.map(([yr, count]) => {
+                const max = Math.max(...topYears.map(y => y[1]));
+                const pct = Math.round((count / (max || 1)) * 100);
+                return (
+                  <div key={yr} className="flex items-center gap-3">
+                    <span className="flex items-center justify-center text-xs font-bold text-foreground w-12">{yr}</span>
+                    <div className="flex-1 h-2 overflow-hidden rounded-full bg-secondary/80">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${pct}%` }}
+                        transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
+                        className="h-full bg-emerald-500" 
+                      />
+                    </div>
+                    <span className="text-sm font-semibold text-foreground w-8 text-right font-mono">{count}</span>
                   </div>
-                  <span className="text-sm font-medium w-6 text-right text-muted-foreground">{count}</span>
-                </div>
-              ))}
+                );
+              })}
             </CardContent>
           </Card>
         </motion.div>
@@ -228,3 +243,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

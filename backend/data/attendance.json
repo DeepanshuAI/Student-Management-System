@@ -270,5 +270,81 @@
     ],
     "updatedAt": "2026-04-10T06:23:08.522Z",
     "updatedBy": "admin@stuman.com"
+  },
+  {
+    "course": "B.Sc B.Ed Computer Science",
+    "date": "2026-04-15",
+    "records": [
+      {
+        "studentId": "SMS-2026-1020",
+        "status": "Absent"
+      },
+      {
+        "studentId": "SMS-2026-1009",
+        "status": "Absent"
+      },
+      {
+        "studentId": "SMS-2026-1057",
+        "status": "Late"
+      },
+      {
+        "studentId": "SMS-2026-1075",
+        "status": "Late"
+      },
+      {
+        "studentId": "SMS-2025-1096",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2025-1077",
+        "status": "Absent"
+      },
+      {
+        "studentId": "SMS-2025-1040",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2024-1081",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2024-1007",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2024-1097",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1019",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1092",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1063",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1093",
+        "status": "Absent"
+      },
+      {
+        "studentId": "SMS-2023-1038",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1089",
+        "status": "Present"
+      },
+      {
+        "studentId": "SMS-2023-1061",
+        "status": "Present"
+      }
+    ],
+    "updatedAt": "2026-04-15T05:56:21.679Z",
+    "updatedBy": "admin@stuman.com"
   }
 ]

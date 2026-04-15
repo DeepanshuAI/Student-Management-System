@@ -18,5 +18,35 @@
     "comments": "",
     "createdAt": "2026-04-10T06:32:24.830Z",
     "createdBy": "admin@stuman.com"
+  },
+  {
+    "_id": "0cbd81fa-da0d-4953-8731-ee94869cfb13",
+    "studentId": "SMS-2026-1020",
+    "subject": "computer",
+    "semester": "Fall 2024",
+    "grade": "78",
+    "comments": "",
+    "createdAt": "2026-04-15T05:57:23.165Z",
+    "createdBy": "admin@stuman.com"
+  },
+  {
+    "_id": "91edf099-85b1-4d3d-9791-90de51be6e93",
+    "studentId": "SMS-2026-1009",
+    "subject": "computer",
+    "semester": "Fall 2024",
+    "grade": "16",
+    "comments": "",
+    "createdAt": "2026-04-15T05:57:23.165Z",
+    "createdBy": "admin@stuman.com"
+  },
+  {
+    "_id": "e079f584-97e9-4b9e-804a-701191ec3406",
+    "studentId": "SMS-2026-1057",
+    "subject": "computer",
+    "semester": "Fall 2024",
+    "grade": "88",
+    "comments": "",
+    "createdAt": "2026-04-15T05:57:23.165Z",
+    "createdBy": "admin@stuman.com"
   }
 ]

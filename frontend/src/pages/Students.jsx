@@ -94,135 +94,142 @@ const Students = ({ addToast }) => {
   const years = ['all', ...Array.from({ length: 6 }, (_, i) => (new Date().getFullYear() - i).toString())];
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Students Roster</h2>
-          <p className="text-muted-foreground mt-1 text-sm">{total} student{total !== 1 ? 's' : ''} total</p>
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 pb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-2">
+        <div className="space-y-1">
+          <h2 className="text-4xl font-display font-bold tracking-tight text-foreground">Students Roster</h2>
+          <p className="text-muted-foreground mt-1 text-sm font-medium">{total} student{total !== 1 ? 's' : ''} total in the system</p>
         </div>
         <Link to="/students/add">
-          <Button><UserPlus className="mr-2 h-4 w-4" /> Add Student</Button>
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow"><UserPlus className="mr-2 h-4 w-4" /> Add Student</Button>
         </Link>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 p-4 bg-card border rounded-lg shadow-sm">
+      <div className="flex flex-col sm:flex-row gap-4 p-4 glass-card rounded-2xl shadow-soft">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           <Input
             placeholder="Search by name, ID or email..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
-            className="pl-9"
+            className="pl-10 h-11 bg-muted/30 border-border/60 hover:bg-muted/50 rounded-xl transition-all focus-visible:ring-primary/40 focus-visible:border-primary focus-visible:bg-background"
           />
           {search && (
             <button 
-              className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground bg-muted p-1 rounded-full transition-colors"
               onClick={() => { setSearch(''); setCurrentPage(1); }}
             >
-              <X className="h-4 w-4" />
+              <X className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
-        <div className="flex gap-2 sm:gap-4 w-full sm:w-auto">
+        <div className="flex gap-3 sm:gap-4 w-full sm:w-auto">
           <div className="relative flex-1 sm:w-[180px]">
-            <Filter className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-primary pointer-events-none" />
             <select
-              className="flex h-10 w-full appearance-none rounded-md border border-input bg-background pl-9 pr-8 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+              className="flex h-11 w-full appearance-none rounded-xl border border-border/60 bg-muted/30 hover:bg-muted/50 pl-10 pr-8 py-2 text-sm ring-offset-background transition-all focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary font-medium"
               value={course}
               onChange={(e) => { setCourse(e.target.value); setCurrentPage(1); }}
             >
               <option value="all">All Courses</option>
               {COURSES.slice(1).map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
+            <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           </div>
-          <select
-            className="flex h-10 w-[120px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
-            value={year}
-            onChange={(e) => { setYear(e.target.value); setCurrentPage(1); }}
-          >
-            {years.map((y) => (
-              <option key={y} value={y}>{y === 'all' ? 'All Years' : y}</option>
-            ))}
-          </select>
+          <div className="relative">
+            <select
+              className="flex h-11 w-[130px] appearance-none rounded-xl border border-border/60 bg-muted/30 hover:bg-muted/50 px-4 pr-8 py-2 text-sm ring-offset-background transition-all focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary font-medium"
+              value={year}
+              onChange={(e) => { setYear(e.target.value); setCurrentPage(1); }}
+            >
+              {years.map((y) => (
+                <option key={y} value={y}>{y === 'all' ? 'All Years' : y}</option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+          </div>
         </div>
       </div>
 
       {/* Table */}
-      <div className="border rounded-lg bg-card shadow-sm overflow-hidden">
+      <div className="glass-card rounded-2xl shadow-soft overflow-hidden border-border/50">
         {loading ? (
           <div className="flex flex-col items-center justify-center h-[400px] gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-muted-foreground text-sm font-medium">Loading students...</p>
+            <div className="relative">
+              <div className="h-12 w-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+              <div className="absolute inset-0 h-12 w-12 rounded-full blur-md bg-primary/20" />
+            </div>
+            <p className="text-muted-foreground text-sm font-medium animate-pulse">Loading directory...</p>
           </div>
         ) : students.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-12 text-center">
-            <div className="rounded-full bg-muted p-6 mb-4">
-              <Search className="h-10 w-10 text-muted-foreground" />
+          <div className="flex flex-col items-center justify-center p-16 text-center">
+            <div className="rounded-full bg-primary/10 p-6 mb-4 shadow-glow-sm">
+              <Search className="h-10 w-10 text-primary" />
             </div>
-            <h3 className="text-lg font-semibold">No students found</h3>
-            <p className="text-muted-foreground mb-6 mt-1">We couldn't find anyone matching your current search and filters.</p>
-            <Button variant="outline" onClick={() => {setSearch(''); setCourse('all'); setYear('all');}}>Clear Filters</Button>
+            <h3 className="text-xl font-display font-bold">No students found</h3>
+            <p className="text-muted-foreground mb-6 mt-2 max-w-sm">We couldn't find anyone matching your current search and filters.</p>
+            <Button variant="outline" className="border-border/60 hover:bg-muted/50" onClick={() => {setSearch(''); setCourse('all'); setYear('all');}}>Clear Filtering</Button>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b">
+            <table className="w-full text-sm text-left border-collapse">
+              <thead className="text-xs text-muted-foreground uppercase bg-muted/20 border-b border-border/50">
                 <tr>
-                  <th className="px-6 py-4 font-medium transition-colors hover:text-foreground cursor-pointer" onClick={() => handleSort('studentId')}>
+                  <th className="px-6 py-4 font-semibold tracking-wider transition-colors hover:text-primary cursor-pointer select-none" onClick={() => handleSort('studentId')}>
                     <div className="flex items-center">ID <SortIcon field="studentId" /></div>
                   </th>
-                  <th className="px-6 py-4 font-medium transition-colors hover:text-foreground cursor-pointer" onClick={() => handleSort('fullName')}>
-                    <div className="flex items-center">Name <SortIcon field="fullName" /></div>
+                  <th className="px-6 py-4 font-semibold tracking-wider transition-colors hover:text-primary cursor-pointer select-none" onClick={() => handleSort('fullName')}>
+                    <div className="flex items-center">Student Name <SortIcon field="fullName" /></div>
                   </th>
-                  <th className="px-6 py-4 font-medium transition-colors hover:text-foreground cursor-pointer" onClick={() => handleSort('course')}>
-                    <div className="flex items-center">Course <SortIcon field="course" /></div>
+                  <th className="px-6 py-4 font-semibold tracking-wider transition-colors hover:text-primary cursor-pointer select-none" onClick={() => handleSort('course')}>
+                    <div className="flex items-center">Course Program <SortIcon field="course" /></div>
                   </th>
-                  <th className="px-6 py-4 font-medium">Contact</th>
-                  <th className="px-6 py-4 font-medium transition-colors hover:text-foreground cursor-pointer" onClick={() => handleSort('enrollmentDate')}>
+                  <th className="px-6 py-4 font-semibold tracking-wider">Contact Info</th>
+                  <th className="px-6 py-4 font-semibold tracking-wider transition-colors hover:text-primary cursor-pointer select-none" onClick={() => handleSort('enrollmentDate')}>
                     <div className="flex items-center">Enrolled <SortIcon field="enrollmentDate" /></div>
                   </th>
-                  <th className="px-6 py-4 font-medium text-right">Actions</th>
+                  <th className="px-6 py-4 font-semibold tracking-wider text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-border/50">
                 {students.map((student) => (
-                  <tr key={student._id} className="bg-card hover:bg-muted/50 transition-colors">
+                  <tr key={student._id} className="bg-transparent hover:bg-muted/20 transition-colors group">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="font-mono text-xs font-semibold px-2.5 py-1 rounded-md bg-secondary text-secondary-foreground">{student.studentId}</span>
+                      <span className="font-mono text-xs font-semibold px-2.5 py-1 rounded-md bg-secondary/50 text-secondary-foreground border border-border/50">{student.studentId}</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/80 to-primary text-primary-foreground font-bold shadow-sm">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-violet text-white font-bold shadow-glow-sm">
                           {student.fullName[0].toUpperCase()}
                         </div>
-                        <span className="font-medium text-card-foreground">{student.fullName}</span>
+                        <span className="font-medium text-foreground group-hover:text-primary transition-colors">{student.fullName}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <Badge variant="success">{student.course}</Badge>
+                      <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20">{student.course}</Badge>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex flex-col text-xs space-y-1">
-                        <span className="text-foreground">{student.email}</span>
-                        <span className="text-muted-foreground">{student.phone}</span>
+                      <div className="flex flex-col space-y-1">
+                        <span className="text-foreground font-medium">{student.email}</span>
+                        <span className="text-muted-foreground text-xs">{student.phone}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-muted-foreground">
-                      {new Date(student.enrollmentDate).toLocaleDateString()}
+                    <td className="px-6 py-4 whitespace-nowrap text-muted-foreground font-medium">
+                      {new Date(student.enrollmentDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="icon" onClick={() => navigate(`/students/${student._id}`)} title="View Detail">
-                          <Eye className="h-4 w-4 text-blue-500" />
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-muted-foreground">
+                      <div className="flex justify-end gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-blue-500 hover:bg-blue-500/10" onClick={() => navigate(`/students/${student._id}`)} title="View Detail">
+                          <Eye className="h-4 w-4" />
                           <span className="sr-only">View</span>
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => navigate(`/students/${student._id}/edit`)} title="Edit Student">
-                          <Edit className="h-4 w-4 text-amber-500" />
+                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-amber-500 hover:bg-amber-500/10" onClick={() => navigate(`/students/${student._id}/edit`)} title="Edit Student">
+                          <Edit className="h-4 w-4" />
                           <span className="sr-only">Edit</span>
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => setDeleteTarget(student._id)} title="Delete Student">
-                          <Trash2 className="h-4 w-4 text-red-500" />
+                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:text-red-500 hover:bg-red-500/10" onClick={() => setDeleteTarget(student._id)} title="Delete Student">
+                          <Trash2 className="h-4 w-4" />
                           <span className="sr-only">Delete</span>
                         </Button>
                       </div>
