@@ -1,43 +1,132 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 const path = require('path');
-const studentRoutes = require('./routes/students');
-const authRoutes = require('./routes/auth');
-const attendanceRoutes = require('./routes/attendance');
-const testGradesRoutes = require('./routes/grades');
 
+const connectDB = require('./config/db');
+const { notFound, errorHandler } = require('./middleware/errorHandler');
+
+// Route imports
+const authRoutes = require('./routes/auth');
+const studentRoutes = require('./routes/students');
+const attendanceRoutes = require('./routes/attendance');
+const gradesRoutes = require('./routes/grades');
+
+// ── App Setup ─────────────────────────────────────────────────────────────────
 const app = express();
 const PORT = process.env.PORT || 5000;
+const isDev = process.env.NODE_ENV !== 'production';
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// ── Connect MongoDB ───────────────────────────────────────────────────────────
+connectDB();
+
+// ── Security Headers (Helmet) ─────────────────────────────────────────────────
+app.use(helmet());
+
+// ── CORS ──────────────────────────────────────────────────────────────────────
+const allowedOrigins = process.env.CLIENT_ORIGIN
+  ? process.env.CLIENT_ORIGIN.split(',').map((o) => o.trim())
+  : ['http://localhost:3000', 'http://localhost:5173'];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (Postman, server-to-server, curl)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      callback(new Error(`CORS policy blocked: ${origin}`));
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  })
+);
+
+// ── Request Logger ────────────────────────────────────────────────────────────
+app.use(morgan(isDev ? 'dev' : 'combined'));
+
+// ── Rate Limiting ─────────────────────────────────────────────────────────────
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: isDev ? 1000 : 100,  // Relaxed in dev, strict in production
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many requests. Please try again later.' },
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20, // Strict limit on login attempts
+  message: { success: false, message: 'Too many login attempts. Try again in 15 minutes.' },
+});
+
+app.use('/api', limiter);
+app.use('/api/auth/login', authLimiter);
+
+// ── Body Parsers ──────────────────────────────────────────────────────────────
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// ── Static Files ──────────────────────────────────────────────────────────────
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routes
+// ── API Routes ────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/attendance', attendanceRoutes);
-app.use('/api/grades', testGradesRoutes);
+app.use('/api/grades', gradesRoutes);
 
-// Health check
+// ── Health Check ──────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Student Management API (V2 Authenticated) is running', timestamp: new Date().toISOString() });
+  res.json({
+    success: true,
+    status: 'OK',
+    message: 'Student Management API is running',
+    environment: process.env.NODE_ENV || 'development',
+    timestamp: new Date().toISOString(),
+    uptime: `${Math.floor(process.uptime())}s`,
+  });
 });
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' });
+// ── Root ──────────────────────────────────────────────────────────────────────
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Student Management System API v2.0',
+    docs: '/api/health',
+  });
 });
 
-// Error handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Internal server error', error: err.message });
+// ── Error Handlers (must be last) ─────────────────────────────────────────────
+app.use(notFound);
+app.use(errorHandler);
+
+// ── Graceful Shutdown ─────────────────────────────────────────────────────────
+const mongoose = require('mongoose');
+process.on('SIGTERM', async () => {
+  console.log('⏳ SIGTERM received. Closing server gracefully...');
+  await mongoose.connection.close();
+  console.log('✅ MongoDB connection closed');
+  process.exit(0);
 });
 
+process.on('unhandledRejection', (err) => {
+  console.error('💥 Unhandled Promise Rejection:', err.message);
+  process.exit(1);
+});
+
+// ── Start Server ──────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`🚀 Secured Server running on http://localhost:${PORT}`);
-  console.log(`📚 JWT Protected API ready`);
+  console.log('');
+  console.log('╔═══════════════════════════════════════════╗');
+  console.log(`║  🚀 Server running on port ${PORT}          ║`);
+  console.log(`║  🌍 Environment: ${(process.env.NODE_ENV || 'development').padEnd(24)}║`);
+  console.log(`║  📚 API Base: http://localhost:${PORT}/api  ║`);
+  console.log('╚═══════════════════════════════════════════╝');
+  console.log('');
 });

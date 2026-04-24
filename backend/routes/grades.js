@@ -1,103 +1,109 @@
 const express = require('express');
-const { readCollection, writeCollection } = require('../utils/fileStorage');
+const Grade = require('../models/Grade');
 const { authenticateToken, requireRole } = require('../middleware/auth');
-const crypto = require('crypto');
 
 const router = express.Router();
 
-// Get batch grades for a specific class view
-router.get('/batch', authenticateToken, (req, res) => {
-  const { semester, subject } = req.query;
-  const gradesData = readCollection('grades');
-  const results = semester && subject 
-    ? gradesData.filter(g => g.semester === semester && g.subject === subject)
-    : gradesData;
-  res.json(results);
-});
+// GET /api/grades/batch?semester=X&subject=Y
+router.get('/batch', authenticateToken, async (req, res) => {
+  try {
+    const { semester, subject } = req.query;
+    const query = {};
+    if (semester) query.semester = semester;
+    if (subject) query.subject = subject;
 
-// Bulk upsert class marks
-router.post('/batch', authenticateToken, requireRole(['admin', 'teacher']), (req, res) => {
-  const { semester, subject, records } = req.body;
-  
-  if (!semester || !subject || !records) {
-    return res.status(400).json({ message: 'Semester, subject, and records are required.' });
+    const grades = await Grade.find(query).sort({ createdAt: -1 }).lean();
+    res.json(grades);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
-
-  let gradesData = readCollection('grades');
-  const studentIds = records.map(r => r.studentId);
-
-  // Eliminate overlapping historical scores cleanly before we append the new definitive copies
-  gradesData = gradesData.filter(g => {
-    const isTargetHit = g.semester === semester && g.subject === subject && studentIds.includes(g.studentId);
-    return !isTargetHit;
-  });
-
-  const newGrades = records.map(r => ({
-    _id: crypto.randomUUID(),
-    studentId: r.studentId,
-    subject,
-    semester,
-    grade: r.grade,
-    comments: r.comments || '',
-    createdAt: new Date().toISOString(),
-    createdBy: req.user.email
-  }));
-
-  gradesData.push(...newGrades);
-  writeCollection('grades', gradesData);
-
-  res.json({ message: 'Batch grades seamlessly synchronized', count: newGrades.length });
 });
 
-// Get all grades for a specific student ID
-router.get('/:studentId', authenticateToken, (req, res) => {
-  const { studentId } = req.params;
-  const gradesData = readCollection('grades');
-  const studentGrades = gradesData.filter(g => g.studentId === studentId);
-  res.json(studentGrades);
-});
+// POST /api/grades/batch  — Bulk upsert grades
+router.post('/batch', authenticateToken, requireRole(['admin', 'teacher']), async (req, res) => {
+  try {
+    const { semester, subject, records } = req.body;
+    if (!semester || !subject || !records) {
+      return res.status(400).json({ message: 'Semester, subject, and records are required' });
+    }
 
-// Add a new grade record (Admin & Teacher)
-router.post('/:studentId', authenticateToken, requireRole(['admin', 'teacher']), (req, res) => {
-  const { studentId } = req.params;
-  const { subject, grade, semester, comments } = req.body;
+    const ops = records.map((r) => ({
+      updateOne: {
+        filter: { studentId: r.studentId, subject, semester },
+        update: {
+          $set: {
+            grade: r.grade,
+            marks: r.marks,
+            comments: r.comments || '',
+            createdBy: req.user.email,
+          },
+        },
+        upsert: true,
+      },
+    }));
 
-  if (!subject || !grade || !semester) {
-    return res.status(400).json({ message: 'Subject, grade, and semester are required.' });
+    const result = await Grade.bulkWrite(ops);
+    res.json({
+      message: 'Batch grades synchronized successfully',
+      count: result.upsertedCount + result.modifiedCount,
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
-
-  const gradesData = readCollection('grades');
-  const newGrade = {
-    _id: crypto.randomUUID(),
-    studentId,
-    subject,
-    grade,
-    semester,
-    comments: comments || '',
-    createdAt: new Date().toISOString(),
-    createdBy: req.user.email
-  };
-
-  gradesData.push(newGrade);
-  writeCollection('grades', gradesData);
-
-  res.status(201).json(newGrade);
 });
 
-// Delete a grade record (Admin Only)
-router.delete('/:gradeId', authenticateToken, requireRole(['admin']), (req, res) => {
-  const { gradeId } = req.params;
-  let gradesData = readCollection('grades');
-  
-  const initialLength = gradesData.length;
-  gradesData = gradesData.filter(g => g._id !== gradeId);
-
-  if (gradesData.length === initialLength) {
-    return res.status(404).json({ message: 'Grade not found' });
+// GET /api/grades/:studentId  — All grades for a student
+router.get('/:studentId', authenticateToken, async (req, res) => {
+  try {
+    const grades = await Grade.find({ studentId: req.params.studentId })
+      .sort({ createdAt: -1 })
+      .lean();
+    res.json(grades);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
+});
 
-  writeCollection('grades', gradesData);
-  res.json({ message: 'Grade deleted successfully' });
+// POST /api/grades/:studentId  — Add single grade
+router.post('/:studentId', authenticateToken, requireRole(['admin', 'teacher']), async (req, res) => {
+  try {
+    const { subject, grade, semester, comments, marks } = req.body;
+    if (!subject || !grade || !semester) {
+      return res.status(400).json({ message: 'Subject, grade, and semester are required' });
+    }
+
+    const newGrade = await Grade.create({
+      studentId: req.params.studentId,
+      subject,
+      grade,
+      semester,
+      marks,
+      comments: comments || '',
+      createdBy: req.user.email,
+    });
+
+    res.status(201).json(newGrade);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      const errors = Object.values(err.errors).map((e) => e.message);
+      return res.status(400).json({ message: 'Validation failed', errors });
+    }
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+// DELETE /api/grades/:gradeId  — Delete single grade
+router.delete('/:gradeId', authenticateToken, requireRole(['admin']), async (req, res) => {
+  try {
+    const grade = await Grade.findByIdAndDelete(req.params.gradeId);
+    if (!grade) return res.status(404).json({ message: 'Grade not found' });
+    res.json({ message: 'Grade deleted successfully' });
+  } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(400).json({ message: 'Invalid grade ID format' });
+    }
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
 });
 
 module.exports = router;

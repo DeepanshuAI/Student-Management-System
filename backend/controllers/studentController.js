@@ -1,70 +1,58 @@
-const { readStudents, writeStudents } = require('../utils/fileStorage');
-const { v4: uuidv4 } = require('uuid');
+const Student = require('../models/Student');
 
-// Generate student ID: SMS-YYYY-XXXX
-const generateStudentId = () => {
+// Generate unique studentId
+const generateStudentId = async () => {
   const year = new Date().getFullYear();
-  const rand = Math.floor(1000 + Math.random() * 9000);
-  return `SMS-${year}-${rand}`;
+  const count = await Student.countDocuments();
+  return `SMS-${year}-${1000 + count}`;
 };
 
 // GET /api/students
-const getAllStudents = (req, res) => {
+const getAllStudents = async (req, res) => {
   try {
-    let students = readStudents();
+    const {
+      search,
+      course,
+      year,
+      sortBy = 'createdAt',
+      sortOrder = 'desc',
+      page = 1,
+      limit = 10,
+    } = req.query;
 
-    const { search, course, year, sortBy, sortOrder, page = 1, limit = 10 } = req.query;
+    const query = {};
 
-    // Search
+    // Text search across fullName, email, studentId
     if (search) {
-      const q = search.toLowerCase();
-      students = students.filter(
-        (s) =>
-          s.fullName.toLowerCase().includes(q) ||
-          s.studentId.toLowerCase().includes(q) ||
-          s.email.toLowerCase().includes(q)
-      );
+      query.$or = [
+        { fullName: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+        { studentId: { $regex: search, $options: 'i' } },
+      ];
     }
 
-    // Filter by course
     if (course && course !== 'all') {
-      students = students.filter((s) => s.course === course);
+      query.course = course;
     }
 
-    // Filter by enrollment year
     if (year && year !== 'all') {
-      students = students.filter(
-        (s) => new Date(s.enrollmentDate).getFullYear() === parseInt(year)
-      );
+      const start = new Date(`${year}-01-01`);
+      const end = new Date(`${year}-12-31`);
+      query.enrollmentDate = { $gte: start, $lte: end };
     }
 
-    // Sort
-    if (sortBy) {
-      students.sort((a, b) => {
-        let aVal = a[sortBy];
-        let bVal = b[sortBy];
-        if (sortBy === 'enrollmentDate') {
-          aVal = new Date(aVal);
-          bVal = new Date(bVal);
-        } else {
-          aVal = aVal?.toString().toLowerCase() || '';
-          bVal = bVal?.toString().toLowerCase() || '';
-        }
-        if (aVal < bVal) return sortOrder === 'desc' ? 1 : -1;
-        if (aVal > bVal) return sortOrder === 'desc' ? -1 : 1;
-        return 0;
-      });
-    }
+    const sortObj = { [sortBy]: sortOrder === 'desc' ? -1 : 1 };
+    const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    const total = students.length;
-    const totalPages = Math.ceil(total / limit);
-    const start = (page - 1) * limit;
-    const paginated = students.slice(start, start + parseInt(limit));
+    const [students, total] = await Promise.all([
+      Student.find(query).sort(sortObj).skip(skip).limit(parseInt(limit)).lean(),
+      Student.countDocuments(query),
+    ]);
 
     res.json({
-      students: paginated,
+      students,
       total,
-      totalPages,
+      totalPages: Math.ceil(total / parseInt(limit)),
       currentPage: parseInt(page),
     });
   } catch (err) {
@@ -72,100 +60,124 @@ const getAllStudents = (req, res) => {
   }
 };
 
-// GET /api/students/:id
-const getStudentById = (req, res) => {
+// GET /api/students/stats
+const getStats = async (req, res) => {
   try {
-    const students = readStudents();
-    const student = students.find((s) => s._id === req.params.id);
+    const todayStr = new Date().toISOString().split('T')[0];
+    const Attendance = require('../models/Attendance');
+
+    const [total, courseAgg, yearAgg, recent, todayAttendance] = await Promise.all([
+      Student.countDocuments(),
+      Student.aggregate([{ $group: { _id: '$course', count: { $sum: 1 } } }]),
+      Student.aggregate([
+        {
+          $group: {
+            _id: { $year: '$enrollmentDate' },
+            count: { $sum: 1 },
+          },
+        },
+      ]),
+      Student.find().sort({ createdAt: -1 }).limit(5).lean(),
+      Attendance.findOne({ date: todayStr }),
+    ]);
+
+    const byCourse = {};
+    courseAgg.forEach((c) => { byCourse[c._id] = c.count; });
+
+    const byYear = {};
+    yearAgg.forEach((y) => { if (y._id) byYear[y._id] = y.count; });
+
+    let presentToday = 0;
+    if (todayAttendance?.records) {
+      presentToday = todayAttendance.records.filter((r) => r.status === 'Present').length;
+    }
+
+    res.json({ total, byCourse, byYear, recent, presentToday });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// GET /api/students/:id
+const getStudentById = async (req, res) => {
+  try {
+    const student = await Student.findById(req.params.id).lean();
     if (!student) return res.status(404).json({ message: 'Student not found' });
     res.json(student);
   } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(400).json({ message: 'Invalid student ID format' });
+    }
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
 // POST /api/students
-const createStudent = (req, res) => {
+const createStudent = async (req, res) => {
   try {
-    const students = readStudents();
-    const newStudent = {
-      _id: uuidv4(),
-      studentId: generateStudentId(),
-      ...req.body,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    students.push(newStudent);
-    writeStudents(students);
-    res.status(201).json(newStudent);
+    const studentId = await generateStudentId();
+    const student = await Student.create({ studentId, ...req.body });
+    res.status(201).json(student);
   } catch (err) {
+    if (err.code === 11000) {
+      const field = Object.keys(err.keyValue)[0];
+      return res.status(409).json({
+        message: `A student with this ${field} already exists`,
+      });
+    }
+    if (err.name === 'ValidationError') {
+      const errors = Object.values(err.errors).map((e) => e.message);
+      return res.status(400).json({ message: 'Validation failed', errors });
+    }
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
 // PUT /api/students/:id
-const updateStudent = (req, res) => {
+const updateStudent = async (req, res) => {
   try {
-    const students = readStudents();
-    const index = students.findIndex((s) => s._id === req.params.id);
-    if (index === -1) return res.status(404).json({ message: 'Student not found' });
-
-    students[index] = {
-      ...students[index],
-      ...req.body,
-      updatedAt: new Date().toISOString(),
-    };
-    writeStudents(students);
-    res.json(students[index]);
+    const student = await Student.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true, runValidators: true }
+    );
+    if (!student) return res.status(404).json({ message: 'Student not found' });
+    res.json(student);
   } catch (err) {
+    if (err.code === 11000) {
+      const field = Object.keys(err.keyValue)[0];
+      return res.status(409).json({ message: `A student with this ${field} already exists` });
+    }
+    if (err.name === 'ValidationError') {
+      const errors = Object.values(err.errors).map((e) => e.message);
+      return res.status(400).json({ message: 'Validation failed', errors });
+    }
+    if (err.name === 'CastError') {
+      return res.status(400).json({ message: 'Invalid student ID format' });
+    }
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
 // DELETE /api/students/:id
-const deleteStudent = (req, res) => {
+const deleteStudent = async (req, res) => {
   try {
-    let students = readStudents();
-    const index = students.findIndex((s) => s._id === req.params.id);
-    if (index === -1) return res.status(404).json({ message: 'Student not found' });
-
-    const deleted = students[index];
-    students.splice(index, 1);
-    writeStudents(students);
-    res.json({ message: 'Student deleted successfully', student: deleted });
+    const student = await Student.findByIdAndDelete(req.params.id);
+    if (!student) return res.status(404).json({ message: 'Student not found' });
+    res.json({ message: 'Student deleted successfully', student });
   } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(400).json({ message: 'Invalid student ID format' });
+    }
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
-// GET /api/stats
-const getStats = (req, res) => {
-  try {
-    const students = readStudents();
-    const total = students.length;
-
-    // Students by course
-    const byCourse = {};
-    students.forEach((s) => {
-      byCourse[s.course] = (byCourse[s.course] || 0) + 1;
-    });
-
-    // Students by year
-    const byYear = {};
-    students.forEach((s) => {
-      const year = new Date(s.enrollmentDate).getFullYear();
-      byYear[year] = (byYear[year] || 0) + 1;
-    });
-
-    // Recent students (last 5)
-    const recent = [...students]
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .slice(0, 5);
-
-    res.json({ total, byCourse, byYear, recent });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
-  }
+module.exports = {
+  getAllStudents,
+  getStudentById,
+  createStudent,
+  updateStudent,
+  deleteStudent,
+  getStats,
 };
-
-module.exports = { getAllStudents, getStudentById, createStudent, updateStudent, deleteStudent, getStats };
