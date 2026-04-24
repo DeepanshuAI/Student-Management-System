@@ -27,20 +27,9 @@ connectDB();
 app.use(helmet());
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
-const allowedOrigins = process.env.CLIENT_ORIGIN
-  ? process.env.CLIENT_ORIGIN.split(',').map((o) => o.trim())
-  : ['http://localhost:3000', 'http://localhost:5173'];
-
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (Postman, server-to-server, curl)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      callback(new Error(`CORS policy blocked: ${origin}`));
-    },
+    origin: process.env.CLIENT_ORIGIN || '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
