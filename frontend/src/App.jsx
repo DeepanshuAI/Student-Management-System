@@ -16,6 +16,7 @@ import ResultsManagement from './pages/ResultsManagement';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { Button } from './components/ui/button';
+import bgImage from './assets/tgce-port-blair.jpg';
 
 const pageVariants = {
   initial: { opacity: 0, y: 12 },
@@ -105,21 +106,60 @@ const AppShell = ({ addToast }) => {
 
   if (!user) {
     return (
-      <Routes>
-        <Route path="/login" element={<Login addToast={addToast} />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
+      <div
+        className="min-h-screen"
+        style={{
+          backgroundImage: `url(${bgImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+        }}
+      >
+        {/* Overlay */}
+        <div
+          className="min-h-screen"
+          style={{
+            background: darkMode
+              ? 'rgba(10, 8, 25, 0.72)'
+              : 'rgba(240, 235, 255, 0.60)',
+            backdropFilter: 'blur(1px)',
+          }}
+        >
+          <Routes>
+            <Route path="/login" element={<Login addToast={addToast} />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </div>
+      </div>
     );
   }
 
   return (
-    <div className={`flex min-h-screen font-sans ${darkMode ? 'bg-mesh-dark' : 'bg-mesh-light'} text-foreground`}>
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="flex flex-1 flex-col min-w-0">
-        <Navbar onMenuClick={() => setSidebarOpen(true)} />
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto">
-          <AnimatedRoutes addToast={addToast} />
-        </main>
+    <div
+      className={`flex min-h-screen font-sans text-foreground`}
+      style={{
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+      }}
+    >
+      {/* Global overlay for readability */}
+      <div
+        className="flex w-full min-h-screen"
+        style={{
+          background: darkMode
+            ? 'rgba(10, 8, 25, 0.80)'
+            : 'rgba(245, 242, 255, 0.82)',
+        }}
+      >
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <div className="flex flex-1 flex-col min-w-0">
+          <Navbar onMenuClick={() => setSidebarOpen(true)} />
+          <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto">
+            <AnimatedRoutes addToast={addToast} />
+          </main>
+        </div>
       </div>
     </div>
   );
