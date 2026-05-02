@@ -8,7 +8,15 @@ const Navbar = ({ onMenuClick }) => {
   const { user, logout } = useAuth();
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
+    <header
+      className="sticky top-0 z-30 w-full border-b"
+      style={{
+        background: 'rgba(8, 5, 25, 0.55)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderColor: 'rgba(255, 255, 255, 0.08)',
+      }}
+    >
       <div className="flex h-16 items-center justify-between px-4 sm:px-6 gap-4">
 
         {/* Left: Hamburger + Brand (mobile) + Search */}

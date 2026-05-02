@@ -42,39 +42,39 @@
   }
 
   .dark {
-    /* ── Dark Mode: Deep Space Black ── */
-    --background: 240 10% 4%;
-    --foreground: 250 30% 95%;
+    /* ── Dark Mode: Deep Space Black — glassy for background image ── */
+    --background: 240 10% 4% / 0;   /* transparent, image shows through */
+    --foreground: 0 0% 98%;         /* near-white text */
 
-    --card: 240 8% 8%;
-    --card-foreground: 250 30% 95%;
+    --card: 240 12% 10%;
+    --card-foreground: 0 0% 96%;
 
-    --popover: 240 8% 8%;
-    --popover-foreground: 250 30% 95%;
+    --popover: 240 10% 8%;
+    --popover-foreground: 0 0% 96%;
 
     /* Primary stays vibrant in dark: brighter violet */
     --primary: 262 83% 68%;
     --primary-foreground: 240 10% 4%;
 
-    --secondary: 240 8% 14%;
-    --secondary-foreground: 250 30% 85%;
+    --secondary: 240 8% 16%;
+    --secondary-foreground: 0 0% 90%;
 
-    --muted: 240 8% 14%;
-    --muted-foreground: 250 15% 55%;
+    --muted: 240 8% 16%;
+    --muted-foreground: 250 20% 72%;  /* brighter — was 55% */
 
-    --accent: 262 50% 15%;
-    --accent-foreground: 262 83% 75%;
+    --accent: 262 50% 18%;
+    --accent-foreground: 262 83% 82%;
 
     --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 8% 15%;
-    --input: 240 8% 15%;
+    --border: 240 8% 22%;          /* slightly brighter borders */
+    --input: 240 8% 18%;
     --ring: 262 83% 68%;
 
-    /* Sidebar specific */
-    --sidebar-bg: 240 8% 6%;
-    --sidebar-border: 240 8% 13%;
+    /* Sidebar — transparent so glass effect works */
+    --sidebar-bg: 0 0% 0% / 0;
+    --sidebar-border: 240 8% 20%;
   }
 }
 
@@ -86,9 +86,11 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    /* transparent so the fixed bg image in App.jsx shows through */
+    background: transparent;
+    @apply text-foreground antialiased;
     font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: color 0.3s ease;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Outfit', sans-serif;
@@ -97,31 +99,40 @@
 }
 
 @layer components {
-  /* Glassmorphism card */
+  /* Glassmorphism card — works over the dark image overlay */
   .glass-card {
-    @apply bg-white/70 dark:bg-white/5 backdrop-blur-md border border-white/40 dark:border-white/10;
-    box-shadow: 0 8px 32px 0 rgba(99, 60, 255, 0.07), 0 1px 0 0 rgba(255,255,255,0.5) inset;
+    background: rgba(18, 12, 50, 0.55);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.06);
   }
-  .dark .glass-card {
-    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.35), 0 1px 0 0 rgba(255,255,255,0.04) inset;
+
+  /* Solid card with slight transparency — used for data tables, forms */
+  .solid-card {
+    background: rgba(14, 10, 38, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.30);
   }
 
   /* Gradient text */
   .gradient-text {
-    @apply bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-600 bg-clip-text text-transparent;
-  }
-  .dark .gradient-text {
-    @apply from-violet-400 via-purple-300 to-indigo-400;
+    @apply bg-gradient-to-r from-violet-400 via-purple-300 to-indigo-400 bg-clip-text text-transparent;
   }
 
   /* Premium KPI card */
   .kpi-card {
-    @apply relative overflow-hidden rounded-2xl border bg-card transition-all duration-300;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    @apply relative overflow-hidden rounded-2xl transition-all duration-300;
+    background: rgba(20, 14, 52, 0.60);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
   }
   .kpi-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 40px -8px rgba(124, 58, 237, 0.18), 0 4px 16px -4px rgba(0,0,0,0.08);
+    border-color: rgba(139, 92, 246, 0.35);
+    box-shadow: 0 12px 40px -8px rgba(124, 58, 237, 0.30), 0 4px 16px -4px rgba(0,0,0,0.20);
   }
 
   /* Nav link active glow */
@@ -133,7 +144,7 @@
   /* Animated gradient border */
   .gradient-border {
     position: relative;
-    background: hsl(var(--card));
+    background: rgba(14, 10, 38, 0.70);
     border-radius: var(--radius);
   }
   .gradient-border::before {

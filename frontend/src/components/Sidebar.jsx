@@ -51,8 +51,16 @@ const Sidebar = ({ isOpen, onClose }) => {
       ──────────────────────────────────────────────────────────────────────── */}
       {isLargeScreen ? (
         // Large screen — plain aside, no motion transform, always visible
-        <aside className="flex w-64 shrink-0 flex-col border-r border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-bg))] shadow-glass dark:shadow-glass-dark">
-          <SidebarContent user={filteredItems.length ? undefined : null} filteredItems={filteredItems} onClose={onClose} user2={user} />
+        <aside
+          className="flex w-64 shrink-0 flex-col border-r"
+          style={{
+            background: 'rgba(10, 6, 30, 0.55)',
+            backdropFilter: 'blur(18px)',
+            WebkitBackdropFilter: 'blur(18px)',
+            borderColor: 'rgba(255, 255, 255, 0.08)',
+          }}
+        >
+          <SidebarContent filteredItems={filteredItems} onClose={onClose} user2={user} />
         </aside>
       ) : (
         // Mobile — animated slide-in drawer
@@ -64,7 +72,13 @@ const Sidebar = ({ isOpen, onClose }) => {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-bg))] shadow-glass dark:shadow-glass-dark"
+              className="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r"
+              style={{
+                background: 'rgba(10, 6, 30, 0.75)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                borderColor: 'rgba(255, 255, 255, 0.08)',
+              }}
             >
               <SidebarContent filteredItems={filteredItems} onClose={onClose} user2={user} />
             </motion.aside>

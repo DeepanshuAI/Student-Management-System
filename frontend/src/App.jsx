@@ -104,10 +104,13 @@ const AppShell = ({ addToast }) => {
   const { user } = useAuth();
   const { darkMode } = useTheme();
 
+  // Always treat the app as "dark" over the image so text/icons are light
+  const isDark = true;
+
   if (!user) {
     return (
       <div
-        className="min-h-screen"
+        className="dark min-h-screen"
         style={{
           backgroundImage: `url(${bgImage})`,
           backgroundSize: 'cover',
@@ -115,14 +118,13 @@ const AppShell = ({ addToast }) => {
           backgroundAttachment: 'fixed',
         }}
       >
-        {/* Overlay */}
+        {/* Overlay — deep navy-purple tint so image is visible but text is readable */}
         <div
           className="min-h-screen"
           style={{
             background: darkMode
-              ? 'rgba(10, 8, 25, 0.72)'
-              : 'rgba(240, 235, 255, 0.60)',
-            backdropFilter: 'blur(1px)',
+              ? 'rgba(6, 4, 18, 0.68)'
+              : 'rgba(12, 8, 40, 0.58)',
           }}
         >
           <Routes>
@@ -136,7 +138,7 @@ const AppShell = ({ addToast }) => {
 
   return (
     <div
-      className={`flex min-h-screen font-sans text-foreground`}
+      className="dark flex min-h-screen font-sans text-foreground"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: 'cover',
@@ -144,13 +146,13 @@ const AppShell = ({ addToast }) => {
         backgroundAttachment: 'fixed',
       }}
     >
-      {/* Global overlay for readability */}
+      {/* Dark semi-transparent overlay — image stays visible, text stays light */}
       <div
         className="flex w-full min-h-screen"
         style={{
           background: darkMode
-            ? 'rgba(10, 8, 25, 0.80)'
-            : 'rgba(245, 242, 255, 0.82)',
+            ? 'rgba(6, 4, 18, 0.72)'
+            : 'rgba(12, 8, 40, 0.62)',
         }}
       >
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
