@@ -27,9 +27,19 @@ connectDB();
 app.use(helmet());
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
+const allowedOrigins = process.env.CLIENT_ORIGIN
+  ? process.env.CLIENT_ORIGIN.split(',').map((o) => o.trim())
+  : ['*'];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN || '*',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. mobile apps, curl, Render health checks)
+      if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      callback(new Error(`CORS blocked: ${origin}`));
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
