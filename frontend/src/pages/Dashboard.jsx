@@ -13,18 +13,36 @@ const Dashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [retrying, setRetrying] = useState(false);
+
+  const fetchStats = async (attempt = 1) => {
+    try {
+      setError('');
+      if (attempt > 1) setRetrying(true);
+      const res = await studentApi.getStats();
+      setStats(res.data);
+    } catch (err) {
+      const isNetwork = !err.response;
+      const msg = err.response?.data?.error || err.response?.data?.message || err.message;
+      console.error(`Dashboard fetch attempt ${attempt} failed:`, msg);
+
+      // Auto-retry up to 3 times for network/cold-start issues
+      if (isNetwork && attempt < 3) {
+        setTimeout(() => fetchStats(attempt + 1), 3000);
+        return;
+      }
+      setError(
+        isNetwork
+          ? 'Server is waking up (Render cold start). Retrying automatically...'
+          : `Failed to load data: ${msg}`
+      );
+    } finally {
+      if (attempt === 1 || !retrying) setLoading(false);
+      setRetrying(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await studentApi.getStats();
-        setStats(res.data);
-      } catch (err) {
-        setError('Failed to load dashboard data. Is the backend running?');
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchStats();
   }, []);
 
@@ -57,8 +75,15 @@ const Dashboard = () => {
         <AlertCircle className="h-10 w-10 text-destructive" />
       </div>
       <h3 className="text-2xl font-display font-bold">Connection Error</h3>
-      <p className="text-muted-foreground">{error}</p>
-      <Button onClick={() => window.location.reload()} className="mt-2" variant="outline">Retry Connection</Button>
+      <p className="text-muted-foreground max-w-sm">{error}</p>
+      <Button
+        onClick={() => { setLoading(true); fetchStats(1); }}
+        className="mt-2 gap-2"
+        variant="outline"
+      >
+        <Loader2 className="h-4 w-4 animate-spin hidden [&.retrying]:block" />
+        Retry Connection
+      </Button>
     </motion.div>
   );
 

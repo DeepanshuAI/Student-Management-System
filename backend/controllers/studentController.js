@@ -70,9 +70,12 @@ const getStats = async (req, res) => {
       Student.countDocuments(),
       Student.aggregate([{ $group: { _id: '$course', count: { $sum: 1 } } }]),
       Student.aggregate([
+        // Filter out docs where enrollmentDate is missing/null
+        { $match: { enrollmentDate: { $exists: true, $ne: null } } },
         {
           $group: {
-            _id: { $year: '$enrollmentDate' },
+            // $toDate safely converts both ISO strings and Date objects
+            _id: { $year: { $toDate: '$enrollmentDate' } },
             count: { $sum: 1 },
           },
         },
@@ -94,6 +97,7 @@ const getStats = async (req, res) => {
 
     res.json({ total, byCourse, byYear, recent, presentToday });
   } catch (err) {
+    console.error('getStats error:', err.message);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };

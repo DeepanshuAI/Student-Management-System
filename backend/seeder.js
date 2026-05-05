@@ -110,6 +110,9 @@ const seed = async () => {
     const studentsWithIds = STUDENTS.map((s, i) => ({
       ...s,
       studentId: `SMS-${year}-${1000 + i}`,
+      // Store as proper BSON Date so $year aggregation works correctly
+      enrollmentDate: new Date(s.enrollmentDate),
+      dateOfBirth: s.dateOfBirth ? new Date(s.dateOfBirth) : undefined,
     }));
     const createdStudents = await Student.insertMany(studentsWithIds, { ordered: false });
     console.log(`   ✓ Created ${createdStudents.length} students`);
