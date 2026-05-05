@@ -23,7 +23,12 @@ const Login = ({ addToast }) => {
       addToast('Login successful!', 'success');
       navigate('/');
     } catch (err) {
-      addToast(err.response?.data?.message || 'Authentication failed', 'error');
+      if (!err.response) {
+        // Network error — backend unreachable or CORS
+        addToast(`Network error: Cannot reach server. Please try again in a moment.`, 'error');
+      } else {
+        addToast(err.response?.data?.message || 'Invalid email or password', 'error');
+      }
     } finally {
       setLoading(false);
     }
