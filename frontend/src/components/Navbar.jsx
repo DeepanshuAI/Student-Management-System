@@ -33,7 +33,7 @@ const Navbar = ({ onMenuClick }) => {
           </div>
 
           {/* Search bar */}
-          <div className="hidden sm:flex relative w-72 max-w-sm">
+          {/* <div className="hidden sm:flex relative w-72 max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <input
               type="search"
@@ -42,7 +42,7 @@ const Navbar = ({ onMenuClick }) => {
               className="w-full h-9 rounded-xl border border-border/60 bg-muted/40 pl-9 pr-4 text-sm placeholder:text-muted-foreground/60 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/50 focus:bg-background"
             />
             <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 hidden md:inline-flex h-5 select-none items-center gap-1 rounded border border-border/60 bg-muted px-1.5 text-[10px] font-mono text-muted-foreground">⌘K</kbd>
-          </div>
+          </div> */}
         </div>
 
         {/* Right: Actions */}
