@@ -81,7 +81,7 @@ const getStats = async (req, res) => {
         },
       ]),
       Student.find().sort({ createdAt: -1 }).limit(5).lean(),
-      Attendance.findOne({ date: todayStr }),
+      Attendance.find({ date: todayStr }),
     ]);
 
     const byCourse = {};
@@ -91,8 +91,12 @@ const getStats = async (req, res) => {
     yearAgg.forEach((y) => { if (y._id) byYear[y._id] = y.count; });
 
     let presentToday = 0;
-    if (todayAttendance?.records) {
-      presentToday = todayAttendance.records.filter((r) => r.status === 'Present').length;
+    if (todayAttendance && todayAttendance.length > 0) {
+      todayAttendance.forEach(attendanceDoc => {
+        if (attendanceDoc.records) {
+          presentToday += attendanceDoc.records.filter((r) => r.status === 'Present').length;
+        }
+      });
     }
 
     res.json({ total, byCourse, byYear, recent, presentToday });
