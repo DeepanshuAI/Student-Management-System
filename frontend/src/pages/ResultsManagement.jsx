@@ -123,7 +123,7 @@ const ResultsManagement = ({ addToast }) => {
             
             <div className="flex flex-wrap gap-3">
               <select
-                className="flex h-10 w-full md:w-fit rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+                className="flex h-10 w-full md:w-fit rounded-md border border-input bg-card text-card-foreground px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
                 value={course}
                 onChange={(e) => setCourse(e.target.value)}
               >

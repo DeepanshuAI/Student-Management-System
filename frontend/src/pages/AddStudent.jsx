@@ -117,7 +117,7 @@ const AddStudent = ({ addToast }) => {
                     name="gender" 
                     value={form.gender} 
                     onChange={handleChange} 
-                    className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${errors.gender ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                    className={`flex h-10 w-full rounded-md border border-input bg-card text-card-foreground px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${errors.gender ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                   >
                     <option value="" disabled>Select a gender identifier</option>
                     {GENDERS.map(g => <option key={g} value={g}>{g}</option>)}
@@ -178,7 +178,7 @@ const AddStudent = ({ addToast }) => {
                     name="course" 
                     value={form.course} 
                     onChange={handleChange} 
-                    className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${errors.course ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                    className={`flex h-10 w-full rounded-md border border-input bg-card text-card-foreground px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${errors.course ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                   >
                     <option value="" disabled>Assign to a course track</option>
                     {COURSES.map(c => <option key={c} value={c}>{c}</option>)}

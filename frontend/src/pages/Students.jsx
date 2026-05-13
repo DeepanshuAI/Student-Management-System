@@ -128,7 +128,7 @@ const Students = ({ addToast }) => {
           <div className="relative flex-1 sm:w-[180px]">
             <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-primary pointer-events-none" />
             <select
-              className="flex h-11 w-full appearance-none rounded-xl border border-border/60 bg-muted/30 hover:bg-muted/50 pl-10 pr-8 py-2 text-sm ring-offset-background transition-all focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary font-medium"
+              className="flex h-11 w-full appearance-none rounded-xl border border-border/60 bg-card text-card-foreground hover:bg-muted pl-10 pr-8 py-2 text-sm ring-offset-background transition-all focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary font-medium"
               value={course}
               onChange={(e) => { setCourse(e.target.value); setCurrentPage(1); }}
             >
@@ -139,7 +139,7 @@ const Students = ({ addToast }) => {
           </div>
           <div className="relative">
             <select
-              className="flex h-11 w-[130px] appearance-none rounded-xl border border-border/60 bg-muted/30 hover:bg-muted/50 px-4 pr-8 py-2 text-sm ring-offset-background transition-all focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary font-medium"
+              className="flex h-11 w-[130px] appearance-none rounded-xl border border-border/60 bg-card text-card-foreground hover:bg-muted px-4 pr-8 py-2 text-sm ring-offset-background transition-all focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary font-medium"
               value={year}
               onChange={(e) => { setYear(e.target.value); setCurrentPage(1); }}
             >
