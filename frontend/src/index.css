@@ -39,6 +39,11 @@
     /* Sidebar specific */
     --sidebar-bg: 0 0% 100%;
     --sidebar-border: 250 20% 90%;
+
+    /* Cards dynamic colors */
+    --glass-bg: 250 30% 98% / 0.85;
+    --solid-bg: 250 30% 100% / 0.95;
+    --kpi-bg: 250 30% 98% / 0.90;
   }
 
   .dark {
@@ -75,6 +80,11 @@
     /* Sidebar — transparent so glass effect works */
     --sidebar-bg: 0 0% 0% / 0;
     --sidebar-border: 240 8% 20%;
+
+    /* Cards dynamic colors */
+    --glass-bg: 240 12% 10% / 0.65;
+    --solid-bg: 240 12% 8% / 0.85;
+    --kpi-bg: 240 12% 10% / 0.70;
   }
 }
 
@@ -99,20 +109,22 @@
 }
 
 @layer components {
-  /* Glassmorphism card — works over the dark image overlay */
+  /* Glassmorphism card — responds to dark/light mode automatically */
   .glass-card {
-    background: rgba(18, 12, 50, 0.55);
+    background: hsl(var(--glass-bg));
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.06);
+    border: 1px solid hsl(var(--border) / 0.6);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    @apply transition-colors duration-300;
   }
 
   /* Solid card with slight transparency — used for data tables, forms */
   .solid-card {
-    background: rgba(14, 10, 38, 0.82);
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.30);
+    background: hsl(var(--solid-bg));
+    border: 1px solid hsl(var(--border) / 0.8);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+    @apply transition-colors duration-300;
   }
 
   /* Gradient text */
@@ -123,11 +135,11 @@
   /* Premium KPI card */
   .kpi-card {
     @apply relative overflow-hidden rounded-2xl transition-all duration-300;
-    background: rgba(20, 14, 52, 0.60);
+    background: hsl(var(--kpi-bg));
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+    border: 1px solid hsl(var(--border) / 0.8);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
   }
   .kpi-card:hover {
     transform: translateY(-2px);
@@ -144,8 +156,9 @@
   /* Animated gradient border */
   .gradient-border {
     position: relative;
-    background: rgba(14, 10, 38, 0.70);
+    background: hsl(var(--solid-bg));
     border-radius: var(--radius);
+    @apply transition-colors duration-300;
   }
   .gradient-border::before {
     content: '';

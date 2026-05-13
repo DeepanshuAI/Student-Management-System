@@ -39,48 +39,40 @@ const Login = ({ addToast }) => {
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="w-full max-w-md overflow-hidden rounded-2xl shadow-2xl"
-        style={{
-          background: 'rgba(255, 255, 255, 0.12)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.25)',
-          boxShadow: '0 25px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3)',
-        }}
+        className="w-full max-w-md overflow-hidden rounded-2xl shadow-2xl glass-card transition-colors duration-300"
       >
         <div
-          className="p-8 pb-6 border-b text-center relative overflow-hidden"
-          style={{ borderColor: 'rgba(255,255,255,0.15)' }}
+          className="p-8 pb-6 border-b text-center relative overflow-hidden border-border/40"
         >
           <div className="absolute top-0 right-0 p-16 rotate-45 bg-primary/10 rounded-full blur-3xl -mx-10 -my-10 z-0"></div>
           <div className="relative z-10 mx-auto flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-indigo-600 text-white shadow-lg mb-4">
             <GraduationCap size={32} />
           </div>
-          <h2 className="text-2xl font-bold tracking-tight text-white drop-shadow">StuManSys</h2>
-          <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.7)' }}>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground drop-shadow-sm">StuManSys</h2>
+          <p className="text-sm mt-1 text-foreground/70">
             TGCE Port Blair — Student Management System
           </p>
         </div>
 
         <form onSubmit={handleLogin} className="p-8 pt-6 space-y-5 relative">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/90">Email Address</label>
+            <label className="text-sm font-medium text-foreground/90">Email Address</label>
             <Input
               type="email"
               placeholder="admin@stuman.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="h-11 bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-primary focus:bg-white/15"
+              className="h-11 bg-background/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-background/80"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/90">Password</label>
+            <label className="text-sm font-medium text-foreground/90">Password</label>
             <Input
               type="password"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="h-11 bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-primary focus:bg-white/15"
+              className="h-11 bg-background/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-background/80"
             />
           </div>
 
@@ -88,7 +80,7 @@ const Login = ({ addToast }) => {
             {loading ? <Loader2 className="animate-spin h-5 w-5" /> : <><Lock className="mr-2 h-4 w-4" /> Secure Sign In</>}
           </Button>
 
-          <div className="text-center text-xs mt-6 space-y-1" style={{ color: 'rgba(255,255,255,0.5)' }}>
+          <div className="text-center text-xs mt-6 space-y-1 text-muted-foreground">
             <p>Admin: admin@stuman.com / password123</p>
             <p>Teacher: teacher@stuman.com / password123</p>
           </div>

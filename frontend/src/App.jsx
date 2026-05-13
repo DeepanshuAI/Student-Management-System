@@ -167,7 +167,7 @@ const AppShell = ({ addToast }) => {
   if (!isAuthenticated) {
     return (
       <div
-        className="dark min-h-screen"
+        className={`${darkMode ? 'dark' : ''} min-h-screen transition-colors duration-300`}
         style={{
           backgroundImage: `url(${bgImage})`,
           backgroundSize: 'cover',
@@ -176,8 +176,8 @@ const AppShell = ({ addToast }) => {
         }}
       >
         <div
-          className="min-h-screen"
-          style={{ background: darkMode ? 'rgba(6, 4, 18, 0.68)' : 'rgba(12, 8, 40, 0.58)' }}
+          className="min-h-screen transition-colors duration-300"
+          style={{ background: darkMode ? 'rgba(6, 4, 18, 0.72)' : 'rgba(250, 250, 255, 0.85)' }}
         >
           <Routes>
             <Route path="/login" element={
@@ -196,7 +196,7 @@ const AppShell = ({ addToast }) => {
   // ── Authenticated shell: full dashboard layout ──────────────────────────────
   return (
     <div
-      className="dark flex min-h-screen font-sans text-foreground"
+      className={`${darkMode ? 'dark' : ''} flex min-h-screen font-sans text-foreground transition-colors duration-300`}
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: 'cover',
@@ -205,8 +205,8 @@ const AppShell = ({ addToast }) => {
       }}
     >
       <div
-        className="flex w-full min-h-screen"
-        style={{ background: darkMode ? 'rgba(6, 4, 18, 0.72)' : 'rgba(12, 8, 40, 0.62)' }}
+        className="flex w-full min-h-screen transition-colors duration-300"
+        style={{ background: darkMode ? 'rgba(6, 4, 18, 0.78)' : 'rgba(250, 250, 255, 0.90)' }}
       >
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <div className="flex flex-1 flex-col min-w-0">
