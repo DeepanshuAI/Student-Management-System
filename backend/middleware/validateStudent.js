@@ -20,8 +20,8 @@ const validateStudent = (req, res, next) => {
   if (!phone || phone.trim() === '') {
     errors.push('Phone number is required');
   } else {
-    const phoneRegex = /^[+]?[\d\s\-().]{7,20}$/;
-    if (!phoneRegex.test(phone)) errors.push('Phone number must be valid');
+    const phoneRegex = /^\+91[-\s]?\d{10}$/;
+    if (!phoneRegex.test(phone)) errors.push('Phone must start with +91 followed by 10 digits');
   }
 
   if (!address || address.trim() === '') errors.push('Address is required');

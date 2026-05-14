@@ -36,7 +36,7 @@ const AddStudent = ({ addToast }) => {
     if (!form.email.trim()) e.email = 'Email is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Invalid email format';
     if (!form.phone.trim()) e.phone = 'Phone is required';
-    else if (!/^[+]?[\d\s\-().]{7,20}$/.test(form.phone)) e.phone = 'Invalid phone number';
+    else if (!/^\+91[-\s]?\d{10}$/.test(form.phone)) e.phone = 'Phone must start with +91 followed by 10 digits';
     if (!form.address.trim()) e.address = 'Address is required';
     if (!form.course) e.course = 'Course is required';
     if (!form.enrollmentDate) e.enrollmentDate = 'Enrollment date is required';
@@ -146,7 +146,7 @@ const AddStudent = ({ addToast }) => {
                 
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Phone Number <span className="text-destructive">*</span></label>
-                  <Input type="tel" name="phone" value={form.phone} onChange={handleChange} placeholder="+1 (555) 000-0000" className={errors.phone ? 'border-destructive focus-visible:ring-destructive' : ''} />
+                  <Input type="tel" name="phone" value={form.phone} onChange={handleChange} placeholder="+91 1234567890" className={errors.phone ? 'border-destructive focus-visible:ring-destructive' : ''} />
                   <ErrorMsg msg={errors.phone} />
                 </div>
 

@@ -58,7 +58,7 @@ const EditStudent = ({ addToast }) => {
     if (!form.email.trim()) e.email = 'Email is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Invalid email format';
     if (!form.phone.trim()) e.phone = 'Phone is required';
-    else if (!/^[+]?[\d\s\-().]{7,20}$/.test(form.phone)) e.phone = 'Invalid phone number';
+    else if (!/^\+91[-\s]?\d{10}$/.test(form.phone)) e.phone = 'Phone must start with +91 followed by 10 digits';
     if (!form.address.trim()) e.address = 'Address is required';
     if (!form.course) e.course = 'Course is required';
     if (!form.enrollmentDate) e.enrollmentDate = 'Enrollment date is required';

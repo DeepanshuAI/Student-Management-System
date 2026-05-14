@@ -25,7 +25,7 @@ const studentSchema = new mongoose.Schema(
     phone: {
       type: String,
       required: [true, 'Phone number is required'],
-      match: [/^[+]?[\d\s\-().]{7,20}$/, 'Please provide a valid phone number'],
+      match: [/^\+91[-\s]?\d{10}$/, 'Phone must start with +91 followed by 10 digits'],
     },
     age: {
       type: Number,
