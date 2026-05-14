@@ -31,7 +31,7 @@ const AddStudent = ({ addToast }) => {
     const e = {};
     if (!form.fullName.trim()) e.fullName = 'Full name is required';
     if (!form.age) e.age = 'Age is required';
-    else if (isNaN(form.age) || +form.age < 1 || +form.age > 40) e.age = 'Age must be between 1 and 120';
+    else if (isNaN(form.age) || +form.age < 1 || +form.age > 40) e.age = 'Age must be between 1 and 40';
     if (!form.gender) e.gender = 'Gender is required';
     if (!form.email.trim()) e.email = 'Email is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Invalid email format';
@@ -64,11 +64,13 @@ const AddStudent = ({ addToast }) => {
       addToast('Student added successfully!', 'success');
       navigate('/students');
     } catch (err) {
-      const serverErrors = err.response?.data?.errors;
-      if (serverErrors) {
-        addToast(serverErrors.join(', '), 'error');
+      const data = err.response?.data;
+      if (data?.errors) {
+        addToast(data.errors.join(', '), 'error');
+      } else if (data?.message) {
+        addToast(data.message, 'error');
       } else {
-        addToast('Failed to add student. Please try again.', 'error');
+        addToast(`Failed: ${err.message || 'Unknown error'}`, 'error');
       }
     } finally {
       setSubmitting(false);

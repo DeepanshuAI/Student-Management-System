@@ -85,7 +85,14 @@ const EditStudent = ({ addToast }) => {
       addToast('Student updated successfully!', 'success');
       navigate(`/students/${id}`);
     } catch (err) {
-      addToast('Failed to update student. Please check inputs.', 'error');
+      const data = err.response?.data;
+      if (data?.errors) {
+        addToast(data.errors.join(', '), 'error');
+      } else if (data?.message) {
+        addToast(data.message, 'error');
+      } else {
+        addToast(`Failed: ${err.message || 'Failed to update student'}`, 'error');
+      }
     } finally {
       setSubmitting(false);
     }

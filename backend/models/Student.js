@@ -95,8 +95,13 @@ const studentSchema = new mongoose.Schema(
 studentSchema.pre('save', async function (next) {
   if (!this.studentId) {
     const year = new Date().getFullYear();
-    const count = await mongoose.model('Student').countDocuments();
-    this.studentId = `SMS-${year}-${1000 + count}`;
+    const lastStudent = await mongoose.model('Student').findOne({ studentId: new RegExp(`^SMS-${year}-`) }).sort({ studentId: -1 });
+    if (!lastStudent) {
+      this.studentId = `SMS-${year}-1000`;
+    } else {
+      const lastIdNum = parseInt(lastStudent.studentId.split('-')[2], 10);
+      this.studentId = `SMS-${year}-${lastIdNum + 1}`;
+    }
   }
   next();
 });

@@ -1,10 +1,11 @@
 const Student = require('../models/Student');
 
-// Generate unique studentId
 const generateStudentId = async () => {
   const year = new Date().getFullYear();
-  const count = await Student.countDocuments();
-  return `SMS-${year}-${1000 + count}`;
+  const lastStudent = await Student.findOne({ studentId: new RegExp(`^SMS-${year}-`) }).sort({ studentId: -1 });
+  if (!lastStudent) return `SMS-${year}-1000`;
+  const lastIdNum = parseInt(lastStudent.studentId.split('-')[2], 10);
+  return `SMS-${year}-${lastIdNum + 1}`;
 };
 
 // GET /api/students
