@@ -14,7 +14,7 @@ const COURSES = [
   'B.A B.Ed English',
   'B.A B.Ed Social Science'
 ];
-const GENDERS = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
+const GENDERS = ['Male', 'Female', 'Other'];
 
 const EditStudent = ({ addToast }) => {
   const { id } = useParams();

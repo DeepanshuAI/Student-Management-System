@@ -14,7 +14,7 @@ const COURSES = [
   'B.A B.Ed English',
   'B.A B.Ed Social Science'
 ];
-const GENDERS = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
+const GENDERS = ['Male', 'Female', 'Other'];
 
 const initialForm = {
   fullName: '', age: '', gender: '', email: '',
@@ -31,7 +31,7 @@ const AddStudent = ({ addToast }) => {
     const e = {};
     if (!form.fullName.trim()) e.fullName = 'Full name is required';
     if (!form.age) e.age = 'Age is required';
-    else if (isNaN(form.age) || +form.age < 1 || +form.age > 120) e.age = 'Age must be between 1 and 120';
+    else if (isNaN(form.age) || +form.age < 1 || +form.age > 40) e.age = 'Age must be between 1 and 120';
     if (!form.gender) e.gender = 'Gender is required';
     if (!form.email.trim()) e.email = 'Email is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Invalid email format';
